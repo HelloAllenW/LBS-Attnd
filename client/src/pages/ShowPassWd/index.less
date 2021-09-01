@@ -1,0 +1,58 @@
+@import '../../assets/styles/color.less';
+@import '../../assets/styles/common.less';
+
+page {
+  background-color: @light-bg;
+}
+
+.show-passwd {
+  padding: 100px 120px;
+
+  &__card {
+    &:active {
+      background: @active;
+    }
+    margin-bottom: 150px;
+    min-height: 260px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    &--desc {
+      .cm-text();
+      font-size: 28px;
+      margin-bottom: 20px;
+      max-width: 400px;
+      color: @red;
+    }
+    &--passwd {
+      .cm-text();
+      font-size: 64px;
+      max-width: 400px;
+      color: @red;
+      margin-bottom: 10px;
+    }
+    &--copy {
+      .cm-text();
+      color: @assist-text;
+      font-size: 24px;
+    }
+  }
+
+  &__desc {
+    line-height: normal;
+    font-size: 32px;
+    color: @assist-text;
+    letter-spacing: 2px;
+    text-align: center;
+    margin-bottom: 60px;
+  }
+
+  &__opt {
+    margin: 10px 30px;
+  }
+}
