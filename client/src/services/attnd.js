@@ -1,7 +1,8 @@
 import * as adLog from '../utils/adLog';
 
 // 创建考勤
-export const createAttnd = async ({ attndName, location, gcj02Location, address, useGroup, groupPassWd }) => {
+export const createAttnd = async ({ attndName, location, gcj02Location,
+  address, useGroup, groupPassWd, attndArress, attndStartTime, attndEndTime }) => {
   try {
     // 获取 systemInfo
     const res = wx.getSystemInfoSync();
@@ -15,12 +16,16 @@ export const createAttnd = async ({ attndName, location, gcj02Location, address,
     };
     
     // 打印参数
-    const payload = { attndName, location, gcj02Location, address, hostSystemInfo, useGroup, groupPassWd };
+    const payload = { attndName, location, gcj02Location,
+      address, hostSystemInfo, useGroup, groupPassWd,
+      attndArress, attndStartTime, attndEndTime };
     adLog.log('createAttnd-params', payload);
 
     const { result } = await wx.cloud.callFunction({
       name: 'createAttnd',
-      data: { attndName, location, gcj02Location, address, hostSystemInfo, useGroup, groupPassWd }
+      data: { attndName, location, gcj02Location,
+        address, hostSystemInfo, useGroup, groupPassWd,
+        attndArress, attndStartTime, attndEndTime }
     });
     if (result.code !== 2000 && result.code !== 3003) throw result;
     adLog.log('createAttnd-result', result);

@@ -16,6 +16,10 @@ export default class EditUserInfo extends Component {
   state = {
     name: '',
     stuId: '',
+    phoneNum: '',
+    address: '',
+    contactPhoneNum: '',
+    department: '',
     isNameErr: false,
     isStuIdErr: false,
     pulling: false,
@@ -40,6 +44,27 @@ export default class EditUserInfo extends Component {
     });
   }
 
+  onPhoneNumChange = (value) => {
+    this.setState({
+      phoneNum: value
+    })
+  }
+  onAddressChange = (value) => {
+    this.setState({
+      address: value
+    })
+  }
+  onContactPhoneNumChange = (value) => {
+    this.setState({
+      contactPhoneNum: value
+    })
+  }
+  onDepartmentChange = (value) => {
+    this.setState({
+      department: value
+    })
+  }
+
   checkFormData = (name, stuId) => {
     if (!name.trim()) {
       Taro.adToast({ text: '姓名不能为空' });
@@ -47,7 +72,7 @@ export default class EditUserInfo extends Component {
       return false;
     }
     if (!isStuIdValid(stuId)) {
-      Taro.adToast({ text: '学号/工号只能为字母、数字和横杠' });
+      Taro.adToast({ text: '工号只能为字母、数字和横杠' });
       this.setState({ isStuIdErr: true });
       return false;
     }
@@ -62,8 +87,9 @@ export default class EditUserInfo extends Component {
     try {
       const result = await getUserInfo();
       if (result.code === 2000) {
-        const { name, stuId } = result.data;
-        this.setState({ name, stuId });
+        const { name, stuId, phoneNum, 
+          address, contactPhoneNum, department } = result.data;
+        this.setState({ name, stuId, phoneNum, address, contactPhoneNum, department });
       }
     } catch (e) {
       adLog.warn('EditUserInfo-error', e);
@@ -73,7 +99,9 @@ export default class EditUserInfo extends Component {
   }
 
   onSubmit = async () => {
-    const { name, stuId, submiting, pulling } = this.state;
+    const { name, stuId, phoneNum,
+      address, contactPhoneNum, department,
+      submiting, pulling } = this.state;
     if (!this.checkFormData(name, stuId)) {
       return;
     }
@@ -82,7 +110,11 @@ export default class EditUserInfo extends Component {
     try {
       await updateUserInfo({
         name: name.trim(),
-        stuId: stuId.trim()
+        stuId: stuId.trim(),
+        phoneNum: phoneNum.trim(),
+        address: address.trim(),
+        contactPhoneNum: contactPhoneNum.trim(),
+        department: department.trim()
       });
       Taro.adToast({ text: '保存成功', status: 'success' });
       setTimeout(() => {
@@ -100,7 +132,9 @@ export default class EditUserInfo extends Component {
   }
 
   render() {
-    const { submiting, name, stuId, isNameErr, isStuIdErr } = this.state;
+    const { submiting, name, stuId, phoneNum, 
+      isNameErr, isStuIdErr, address,
+      contactPhoneNum, department } = this.state;
     return (
       <View className="edit-userinfo">
         <View className="edit-userinfo__form">
@@ -116,15 +150,55 @@ export default class EditUserInfo extends Component {
               onChange={this.onNameChange}
             />
             <AtInput
-              title='学号/工号'
+              title='工号'
               type='text'
-              placeholder="填写学号或工号"
+              placeholder="填写工号"
               placeholderStyle="color: #cccccc"
               error={isStuIdErr}
               maxLength={150}
               border={false}
               value={stuId}
               onChange={this.onStuIdChange}
+            />
+            <AtInput
+              title='电话'
+              type='text'
+              placeholder="填写电话"
+              placeholderStyle="color: #cccccc"
+              maxLength={150}
+              border={false}
+              value={phoneNum}
+              onChange={this.onPhoneNumChange}
+            />
+            <AtInput
+              title='家庭住址'
+              type='text'
+              placeholder="填写家庭住址"
+              placeholderStyle="color: #cccccc"
+              maxLength={150}
+              border={false}
+              value={address}
+              onChange={this.onAddressChange}
+            />
+            <AtInput
+              title=' 紧急联系人'
+              type='text'
+              placeholder="填写紧急联系人电话"
+              placeholderStyle="color: #cccccc"
+              maxLength={150}
+              border={false}
+              value={contactPhoneNum}
+              onChange={this.onContactPhoneNumChange}
+            />
+            <AtInput
+              title='部门'
+              type='text'
+              placeholder="填写部门（作业队）"
+              placeholderStyle="color: #cccccc"
+              maxLength={150}
+              border={false}
+              value={department}
+              onChange={this.onDepartmentChange}
             />
           </AtForm>
         </View>

@@ -3,8 +3,6 @@ import { View, Image } from '@tarojs/components';
 import AdToast from '../../components/AdToast';
 import avatarLzy from '../../assets/images/avatar-lzy.jpg';
 import avatarLyx from '../../assets/images/avatar-lyx.jpeg';
-import avatarLzp from '../../assets/images/avatar-lzp.jpg';
-import avatarWy from '../../assets/images/avatar-wy.jpg';
 import './index.less';
 
 export default class About extends Component {
@@ -14,27 +12,22 @@ export default class About extends Component {
   }
 
   state = {
-    t1: '考勤 Attnd',
+    t1: '萌兴考勤',
     aps1: [
-      '考勤 Attnd 是基于 LBS 开发的考勤和签到小程序，旨在提高课堂考勤效率',
-      '@2019广州大学计算机学院毕业设计作品',
-      'by纸纸纸盆（ByteDance Noob FE）'
+      '萌兴考勤是基于 LBS 开发的考勤和签到小程序，用于公司所有人员的考勤管理'
     ],
-    t3: '开发 Development',
+    t3: '中交二公局萌兴工程有限公司',
     aps3: [
-      '技术栈：Taro、Taro UI、云开发'
+      '中交二公局萌兴工程有限公司（简称萌兴公司）于2001年成立于古城西安，是世界500强——中国交通建设股份有限公司旗下中交第二公路工程局有限公司的全资子公司。企业注册资本2.01亿元，年施工能力30亿元以上，经营范围涵盖公路、桥梁、铁路、隧道、市政、房建、交通工程及水环境治理等多个领域。'
     ],
-    t4: '贡献者 Contributors',
-    github: 'https://github.com/Lyokoo/LBS-Attnd',
+    t4: '技术支持',
     contributors: [
-      { avatar: avatarLzy, name: '鲤资姨' },
-      { avatar: avatarLyx, name: 'FOON' },
-      { avatar: avatarLzp, name: '纸纸纸盆' },
-      { avatar: avatarWy, name: '脑浮泥' }
+      { avatar: avatarLzy, name: 'King Arthur' },
+      { avatar: avatarLyx, name: 'Allen' }
     ],
     t5: '联系 Contact',
     aps5: [
-      'zhipen1874'
+      '18691970403'
     ]
   }
 
@@ -49,7 +42,7 @@ export default class About extends Component {
   checkUpdateLog = () => wx.navigateTo({ url: '/pages/UpdateLog/index' });
 
   render() {
-    const { t1, t2, t3, t4, t5, aps1, aps2, aps3, github, aps5 } = this.state;
+    const { t1, t2, t3, t4, t5, aps1, aps2, aps3, aps5 } = this.state;
     return (
       <View className="about">
         {/* 考勤 Attnd */}
@@ -60,7 +53,6 @@ export default class About extends Component {
         {/* 开发 Development */}
         <View className="about__title">{t3}</View>
         <View>
-          <View className="about__paragraph"><Text onClick={() => this.onCopy(github)} className="about__link">{github}</Text></View>
           {aps3.map(p => <View key={p} className="about__paragraph">{p}</View>)}
           <View className="about__paragraph"><Text onClick={() => this.checkUpdateLog()} className="about__link">查看更新日志</Text></View>
         </View>

@@ -10,7 +10,8 @@ exports.main = async (event) => {
   const userCollection = db.collection('user');
   const attndCollection = db.collection('attnd');
   const groupCollection = db.collection('group');
-  const { name, stuId } = event;
+  const { name, stuId, phoneNum, 
+    address, contactPhoneNum, department } = event;
   const { openId } = event.userInfo;
   console.log('event', event);
   if (!name) {
@@ -46,6 +47,10 @@ exports.main = async (event) => {
           openId,
           name,
           stuId,
+          phoneNum,
+          address,
+          contactPhoneNum,
+          department,
           createTime: new Date(),
           updateTime: new Date()
         }
@@ -60,6 +65,10 @@ exports.main = async (event) => {
         data: {
           name,
           stuId,
+          phoneNum,
+          address,
+          contactPhoneNum,
+          department,
           updateTime: new Date()
         }
       });

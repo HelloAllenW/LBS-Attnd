@@ -4,7 +4,7 @@ import { AtInput, AtButton, AtSwitch } from 'taro-ui';
 import AdToast from '../../components/AdToast';
 import { getLocation, getAddress } from '../../services/location';
 import { createAttnd } from '../../services/attnd';
-import { getAllGroups } from '../../services/group';
+// import { getAllGroups } from '../../services/group';
 import * as adLog from '../../utils/adLog';
 import './index.less';
 
@@ -17,11 +17,9 @@ export default class EditAttnd extends Component {
   state = {
     attndName: '',
     isAttndNameErr: false,
-    getGroupLoading: false,
-    useGroup: false,
-    groupPassWd: '',
-    groupList: [],
-    selectedIndex: -1,
+    attndArress: '',
+    attndStartTime: '',
+    attndEndTime: ''
   }
 
   submiting = false;
@@ -32,67 +30,34 @@ export default class EditAttnd extends Component {
       isAttndNameErr: false
     });
   }
-
-  onSwitchChange = (value) => {
-    const useGroup = value;
-    this.setState({ useGroup });
-    if (value) {
-      this.setState({
-        groupPassWd: '',
-        selectedIndex: -1
-      });
-      this.getGroupList();
-    }
-  }
-
-  onPickerChange = (event) => {
-    const selectedIndex = event.target.value;
-    const groupPassWd = this.state.groupList[selectedIndex].passWd;
+  onAddressChange = (value) => {
     this.setState({
-      selectedIndex,
-      groupPassWd
+      attndArress: value
+    });
+  }
+  onStartTimeChange = (value) => {
+    this.setState({
+      attndStartTime: value
+    });
+  }
+  onEndTimeChange = (value) => {
+    this.setState({
+      attndEndTime: value
     });
   }
 
-  checkFormData = (attndName, useGroup, groupPassWd) => {
+  checkFormData = (attndName) => {
     if (!attndName.trim()) {
       Taro.adToast({ text: '名称不能为空' });
       this.setState({ isAttndNameErr: true });
       return false;
     }
-    if (useGroup && !groupPassWd) {
-      Taro.adToast({ text: '请选择小组' });
-      return false;
-    }
     return true;
   }
 
-  getGroupList = async () => {
-    const { getGroupLoading } = this.state;
-    if (getGroupLoading) {
-      return;
-    }
-    this.setState({ getGroupLoading: true });
-    wx.showLoading({ title: '获取小组', mask: true });
-    try {
-      const { data = [] } = await getAllGroups();
-      this.setState({
-        groupList: data,
-        getGroupLoading: false
-      });
-    } catch (e) {
-      Taro.adToast({ text: '获取小组出了点问题～' });
-      adLog.warn('getAllGroups-error', e);
-      this.setState({ getGroupLoading: false });
-    }
-    wx.hideLoading();
-  }
-
-  onCreateGroup = () => wx.redirectTo({ url: '/pages/EditGroup/index' });
-
   onSubmit = async () => {
-    const { attndName, useGroup, groupPassWd } = this.state;
-    if (!this.checkFormData(attndName, useGroup, groupPassWd)) {
+    const { attndName, attndArress, attndStartTime, attndEndTime } = this.state;
+    if (!this.checkFormData(attndName)) {
       return;
     }
     if (this.submiting) return;
@@ -123,8 +88,9 @@ export default class EditAttnd extends Component {
         location,
         address,
         gcj02Location,
-        useGroup,
-        groupPassWd
+        attndArress,
+        attndStartTime,
+        attndEndTime
       });
 
       this.submiting = false;
@@ -158,18 +124,14 @@ export default class EditAttnd extends Component {
   }
 
   render() {
-    const { attndName, isAttndNameErr, useGroup, groupList, selectedIndex, getGroupLoading } = this.state;
+    const { attndName, isAttndNameErr, attndArress, attndStartTime, attndEndTime } = this.state;
     const desc1 = '* 小程序通过 GPS 定位，确定考勤有效范围是以你当前位置为中心的方圆 200 米，在有效范围内完成签到者视为已到';
-    const desc2 = '* 小组是为考勤预设的名单，只有在名单内的签到者才能参加考勤，如果你还没有创建过小组，可前往“我的”页面在线创建';
-
-    const computeGroupList = groupList.map(el => el.groupName);
 
     return (
       <View className="edit-attnd">
         <View className="edit-attnd__title">发起考勤</View>
         <View>
           <View className="edit-attnd__desc">{desc1}</View>
-          <View className="edit-attnd__desc">{desc2}</View>
         </View>
         <View className="edit-attnd__form">
           <View className="edit-attnd__input">
@@ -183,26 +145,36 @@ export default class EditAttnd extends Component {
               onChange={this.onInputChange}
             />
           </View>
-          <View className="edit-attnd__switch">
-            <AtSwitch title='使用小组' checked={useGroup} onChange={this.onSwitchChange} />
+          <View className="edit-attnd__input">
+            <AtInput
+              type='text'
+              placeholder='输入考勤地址（仅用于用户页面展示）'
+              placeholderStyle="color: #cccccc"
+              maxLength={150}
+              value={attndArress}
+              onChange={this.onAddressChange}
+            />
           </View>
-          {
-            useGroup && (
-              groupList.length > 0
-              ? (
-                  <View className="edit-attnd__picker">
-                    <Picker mode="selector" range={computeGroupList} onChange={this.onPickerChange}>
-                      {
-                        selectedIndex === -1
-                          ? <View style={{ color: '#cccccc' }}>选择小组</View>
-                          : <View>{groupList[selectedIndex].groupName}</View>
-                      }
-                    </Picker>
-                  </View>
-                )
-              : (!getGroupLoading && <View className="edit-attnd__hint">还没有小组？<Text className="edit-attnd__hint--link" onClick={this.onCreateGroup}>点击创建</Text></View>)
-            )
-          }
+          <View className="edit-attnd__input">
+            <AtInput
+              type='text'
+              placeholder='输入考勤开始时间（如：9:00）'
+              placeholderStyle="color: #cccccc"
+              maxLength={150}
+              value={attndStartTime}
+              onChange={this.onStartTimeChange}
+            />
+          </View>
+          <View className="edit-attnd__input">
+            <AtInput
+              type='text'
+              placeholder='输入考勤结束时间（如：18:00）'
+              placeholderStyle="color: #cccccc"
+              maxLength={150}
+              value={attndEndTime}
+              onChange={this.onEndTimeChange}
+            />
+          </View>
         </View>
         <View className="edit-attnd__btn">
           <AtButton type="primary" onClick={this.onSubmit}>立即发起</AtButton>

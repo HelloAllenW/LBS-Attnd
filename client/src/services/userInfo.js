@@ -1,8 +1,10 @@
 import * as adStorage from '../utils/adStorage';
 import * as adLog from '../utils/adLog';
 
-export const updateUserInfo = async ({ name, stuId }) => {
-  const payload = { name, stuId };
+export const updateUserInfo = async ({ name, stuId, phoneNum,
+  address, contactPhoneNum, department }) => {
+  const payload = { name, stuId, phoneNum, 
+    address, contactPhoneNum, department };
   adLog.log('updateUserInfo-params', payload);
   try {
     const { result } = await wx.cloud.callFunction({

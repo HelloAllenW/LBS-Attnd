@@ -37,7 +37,10 @@ exports.main = async (event) => {
   const attndCollection = db.collection('attnd');
   const userCollection = db.collection('user');
   const groupCollection = db.collection('group');
-  const { attndName, location, gcj02Location, address, hostSystemInfo, useGroup, groupPassWd } = event;
+  const { attndName, location, gcj02Location,
+    address, hostSystemInfo, useGroup,
+    groupPassWd, attndArress, attndStartTime,
+    attndEndTime } = event;
   const { openId } = event.userInfo;
   console.log('event', event);
 
@@ -118,6 +121,9 @@ exports.main = async (event) => {
       signinerList,
       useGroup,
       groupPassWd,
+      attndArress,
+      attndStartTime,
+      attndEndTime,
       createTime: new Date(),
       updateTime: new Date()
     }

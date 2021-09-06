@@ -2,7 +2,7 @@ Arguments:
   C:\Program Files\nodejs\node.exe C:\Program Files\nodejs\node_modules\yarn\bin\yarn.js add promise-polyfill --silent --no-progress
 
 PATH: 
-  D:\nvm\nvm\v12.14.1\node_modules\npm\node_modules\npm-lifecycle\node-gyp-bin;E:\Users\Allen's hp\Desktop\LBS-Attnd\client\node_modules\.bin;C:\Users\Allen's hp\AppData\Roaming\npm\node_modules\cnpm\node_modules\npm\node_modules\npm-lifecycle\node-gyp-bin;E:\Users\Allen's hp\Desktop\LBS-Attnd\client\node_modules\.bin;D:\Xshell\;D:\XFTP\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;D:\Java\jdk1.8.0_131\bin;D:\Java\jdk1.8.0_131\jre\bin;D:\android-sdk-windows\ndk-bundle;D:\Git\cmd;D:\android-sdk-windows\platform-tools;D:\android-sdk-windows\tools;D:\apache-maven-3.6.3\bin;D:\xampp\php;C:\ProgramData\ComposerSetup\bin;D:\Geth;D:\nvm\nvm;C:\Program Files\nodejs;D:\MongoDB\bin;D:\flutter\bin;D:\Git LFS;D:\putty\;D:\Ruby27-x64\bin;D:\Python3.8.3\Scripts\;D:\Python3.8.3\;C:\Users\Allen's hp\AppData\Local\Microsoft\WindowsApps;C:\Users\Allen's hp\AppData\Roaming\npm;C:\Users\Allen's hp\AppData\Roaming\Composer\vendor\bin;D:\nvm\nvm;C:\Program Files\nodejs;C:\Users\Allen's hp\AppData\Local\atom\bin;D:\Microsoft VS Code\bin;D:\IntelliJ IDEA Community Edition 2020.1.4\bin;;C:\Users\Allen's hp\AppData\Local\GitHubDesktop\bin
+  D:\nvm\nvm\v12.14.1\node_modules\npm\node_modules\npm-lifecycle\node-gyp-bin;E:\Project（项目）\LBS-Attnd\client\node_modules\.bin;D:\nvm\nvm\v12.14.1\node_modules\npm\node_modules\npm-lifecycle\node-gyp-bin;E:\Project（项目）\LBS-Attnd\client\node_modules\.bin;D:\Xshell\;D:\XFTP\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;D:\Java\jdk1.8.0_131\bin;D:\Java\jdk1.8.0_131\jre\bin;D:\android-sdk-windows\ndk-bundle;D:\Git\cmd;D:\android-sdk-windows\platform-tools;D:\android-sdk-windows\tools;D:\apache-maven-3.6.3\bin;D:\xampp\php;C:\ProgramData\ComposerSetup\bin;D:\Geth;D:\nvm\nvm;C:\Program Files\nodejs;D:\MongoDB\bin;D:\flutter\bin;D:\Git LFS;D:\putty\;D:\Ruby27-x64\bin;D:\Python3.8.3\Scripts\;D:\Python3.8.3\;C:\Users\Allen's hp\AppData\Local\Microsoft\WindowsApps;C:\Users\Allen's hp\AppData\Roaming\npm;C:\Users\Allen's hp\AppData\Roaming\Composer\vendor\bin;D:\nvm\nvm;C:\Program Files\nodejs;C:\Users\Allen's hp\AppData\Local\atom\bin;D:\Microsoft VS Code\bin;D:\IntelliJ IDEA Community Edition 2020.1.4\bin;;C:\Users\Allen's hp\AppData\Local\GitHubDesktop\bin
 
 Yarn version: 
   1.22.10
@@ -14,7 +14,7 @@ Platform:
   win32 x64
 
 Trace: 
-  Error: ENOENT: no such file or directory, copyfile 'C:\Users\Allen's hp\AppData\Local\Yarn\Cache\v6\npm-ansi-regex-3.0.0-ed0317c322064f79466c02966bddb605ab37d998-integrity\node_modules\ansi-regex\index.js' -> 'E:\Users\Allen's hp\Desktop\LBS-Attnd\client\node_modules\eslint\node_modules\ansi-regex\index.js'
+  Error: ENOENT: no such file or directory, copyfile 'C:\Users\Allen's hp\AppData\Local\Yarn\Cache\v6\npm-ansi-regex-3.0.0-ed0317c322064f79466c02966bddb605ab37d998-integrity\node_modules\ansi-regex\package.json' -> 'E:\Project（项目）\LBS-Attnd\client\node_modules\eslint\node_modules\ansi-regex\package.json'
 
 npm manifest: 
   {
