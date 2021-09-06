@@ -10,6 +10,8 @@ import avatarLyx from '../../assets/images/avatar-lyx.jpeg';
 import * as adLog from '../../utils/adLog';
 import { getLocation } from '../../services/location';
 import { signin } from '../../services/signin';
+import AdToast from '../../components/AdToast';
+import * as adStorage from '../../utils/adStorage';
 
 export default class Index extends Component {
 
@@ -49,7 +51,8 @@ export default class Index extends Component {
         // 根据 passWd 来获取考勤信息
         const res = await getAttndByPassWd({ passWd });
         const { hostName, attndArress, attndStartTime, attndEndTime } = res.data
-        this.setState({ hostName, attndArress, attndStartTime, attndEndTime, passWd });
+        adStorage.set('isAdmin', isAdmin);
+        this.setState({ hostName, attndArress, attndStartTime, attndEndTime, passWd, isAdmin });
       }
     } catch (e) {
       adLog.warn('GetUserInfo-error', e);
@@ -145,6 +148,7 @@ export default class Index extends Component {
   render() {
     const { windowHeight, isAdmin, hostName, attndArress, attndStartTime, attndEndTime, currentDate } = this.state;
     return (
+      <View>
       <View className="home">
         {isAdmin && <View className="home__wrapper" style={{ height: `${windowHeight / 2}px` }}>
           <View className="home__signin home__opt" onClick={this.onFindAttndClick}>
@@ -168,8 +172,8 @@ export default class Index extends Component {
               src={avatarLyx}
             />
             <View className="title">
-              <Text className="title1">{hostName}</Text>
-              <Text className="title2">{attndArress}</Text>
+              <Text className="title1">{hostName  || 'loading..'}</Text>
+              <Text className="title2">{attndArress  || 'loading..'}</Text>
             </View>
           </View>
         </View> }
@@ -177,7 +181,7 @@ export default class Index extends Component {
           <View className="home__user_opt">
             <View className="top">
               <View className="topLeft bg">
-                <Text className="title1">上班{attndStartTime}</Text>
+                <Text className="title1">上班{attndStartTime  || 'loading..'}</Text>
                 <View className="home__user_text">
                   <Image
                     className="hasAttnd"
@@ -188,7 +192,7 @@ export default class Index extends Component {
                 </View>
               </View>
               <View className="topRight bg">
-                <Text className="title1">下班{attndEndTime}</Text>
+                <Text className="title1">下班{attndEndTime  || 'loading..'}</Text>
                 <View className="home__user_text">
                   <Image
                     className="hasAttnd"
@@ -215,6 +219,8 @@ export default class Index extends Component {
             </View>
           </View>
         </View> }
+      </View>
+      <AdToast />
       </View>
     )
   }

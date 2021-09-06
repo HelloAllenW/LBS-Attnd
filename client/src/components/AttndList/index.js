@@ -11,7 +11,8 @@ export default class AttndList extends Component {
     data: [],
     hasMore: true,
     onLoadMore: () => { },
-    onItemClick: () => { }
+    onItemClick: () => { },
+    onTagClick: () => { }
   }
 
   onLoadMore = () => {
@@ -34,7 +35,10 @@ export default class AttndList extends Component {
             {data.map((item, index) => {
               return (
                 <View className="attnd-list__item" key={item.key}>
-                  <AttndInfo data={item} onClick={() => this.props.onItemClick(index)} />
+                  <AttndInfo
+                    data={item}
+                    onClick={() => this.props.onItemClick(index)}
+                    onTagClick={() => this.props.onTagClick(item)} />
                 </View>
               );
             })}

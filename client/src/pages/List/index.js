@@ -7,6 +7,7 @@ import { getSigninListBySigninerOpenId } from '../../services/signin';
 import * as adLog from '../../utils/adLog';
 import { throttle, formatDate } from '../../utils/func';
 import './index.less';
+import * as adStorage from '../../utils/adStorage';
 
 export default class List extends Component {
 
@@ -35,6 +36,8 @@ export default class List extends Component {
       signinData: [],
       signinHasMore: true,
       signinOffsetId: null,
+
+      isAdmin: false
     };
   }
 
@@ -50,6 +53,11 @@ export default class List extends Component {
     this.getSigninList();
     this.getAttndList();
   }, 6000);
+
+  componentDidMount() {
+    const isAdmin = adStorage.get('isAdmin');
+    this.setState({ isAdmin })
+  }
 
   onTabToggle = (value) => {
     this.setState({
@@ -170,7 +178,8 @@ export default class List extends Component {
       attndData,
       attndHasMore,
       signinData,
-      signinHasMore
+      signinHasMore,
+      isAdmin
     } = this.state;
 
     const computeSigninData = this.getComputeAttndData(signinData);
@@ -178,7 +187,7 @@ export default class List extends Component {
 
     return (
       <View className="list">
-        <AtTabs
+        {isAdmin && <AtTabs
           current={tabIndex}
           tabList={this.tabList}
           onClick={this.onTabToggle}
@@ -203,7 +212,14 @@ export default class List extends Component {
               onItemClick={this.onAttndItemClick}
             />
           </AtTabsPane>
-        </AtTabs>
+        </AtTabs>}
+        {!isAdmin && <AttndList
+          height={listHeight}
+          data={computeSigninData}
+          hasMore={signinHasMore}
+          onLoadMore={this.onSigninLoadMore}
+          onItemClick={this.onSigninItemClick}
+        />}
       </View>
     )
   }

@@ -21,6 +21,7 @@ class App extends Component {
       'pages/UpdateLog/index',
       'pages/EditGroup/index',
       'pages/GroupList/index',
+      'pages/UserList/index',
       'pages/JoinIn/index',
     ],
     window: {

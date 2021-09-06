@@ -53,7 +53,7 @@ export default class SigninInfo extends Component {
           <Text className="signin-info__avatar">{signinerName[0]}</Text>
           <View className="signin-info__info">
             <View className="signin-info__info--name">{signinerName}</View>
-            <View className="signin-info__info--desc">ID: {signinerStuId || '(空)'}</View>
+            <View className="signin-info__info--desc">工号: {signinerStuId || '(空)'}</View>
           </View>
         </View>
         <View className="signin-info__status" onClick={() => this.onStatusClick({ signinerOpenId, signinerName })}>

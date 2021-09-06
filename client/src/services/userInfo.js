@@ -63,3 +63,38 @@ export const getUserInfo = async (isFromStorage = false) => {
     throw e;
   }
 }
+
+// 获取小组列表
+export const getUserList = async ({ offset, offsetId }) => {
+  const payload = { offset, offsetId };
+  adLog.log('getUserList-params', payload);
+  try {
+    const { result } = await wx.cloud.callFunction({
+      name: 'getUserList',
+      data: { offset, offsetId }
+    });
+    if (result.code !== 2000) throw result;
+    adLog.log('getUserList-result', result);
+    return result;
+  } catch (e) {
+    adLog.warn('getUserList-error', e);
+    throw e;
+  }
+}
+
+export const updateUserInfoByPassWd = async ({ id, passWd }) => {
+  const payload = { id, passWd };
+  adLog.log('updateUserInfoByPassWd-params', payload);
+  try {
+    const { result } = await wx.cloud.callFunction({
+      name: 'updateUserInfoByPassWd',
+      data: { ...payload }
+    });
+    if (result.code !== 2000) {
+      throw result;
+    }
+  } catch (e) {
+    adLog.warn('updateUserInfoByPassWd-error', e);
+    throw e;
+  }
+}

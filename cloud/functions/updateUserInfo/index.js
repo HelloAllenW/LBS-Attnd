@@ -51,6 +51,7 @@ exports.main = async (event) => {
           address,
           contactPhoneNum,
           department,
+          isAdmin: false,
           createTime: new Date(),
           updateTime: new Date()
         }

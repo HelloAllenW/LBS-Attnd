@@ -108,3 +108,18 @@ export const deleteAttnd = async ({ passWd }) => {
     throw e;
   }
 }
+
+// 获取所有考勤
+export const getAllAttnds = async () => {
+  try {
+    const { result } = await wx.cloud.callFunction({
+      name: 'getAllAttnds'
+    });
+    if (result.code !== 2000) throw result;
+    adLog.log('getAllAttnds-result', result);
+    return result;
+  } catch (e) {
+    adLog.warn('getAllAttnds-error', e);
+    throw e;
+  }
+}

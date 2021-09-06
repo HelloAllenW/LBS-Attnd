@@ -5,6 +5,7 @@ import { getUserInfo } from '../../services/userInfo';
 import imgLocation from '../../assets/images/location.png';
 import { AppIds } from '../../utils/consts';
 import './index.less';
+import * as adStorage from '../../utils/adStorage';
 
 /**
  * 个人信息、授权管理、邮箱导出、问题反馈、推荐给朋友、关于我们
@@ -20,11 +21,14 @@ export default class Profile extends Component {
   state = {
     name: '',
     stuId: '',
-    pulling: false
+    pulling: false,
+    isAdmin: false
   }
 
   componentDidShow() {
     this.getUserInfo();
+    const isAdmin = adStorage.get('isAdmin');
+    this.setState({ isAdmin })
   }
 
   onShareAppMessage() {
@@ -51,21 +55,22 @@ export default class Profile extends Component {
 
   onUserInfoClick = () => wx.navigateTo({ url: '/pages/EditUserInfo/index' });
 
-  onGroupClick = () => wx.navigateTo({ url: '/pages/GroupList/index' });
+  // onGroupClick = () => wx.navigateTo({ url: '/pages/GroupList/index' });
+  onUserClick = () => wx.navigateTo({ url: '/pages/UserList/index' });
 
   onAboutClick = () => wx.navigateTo({ url: '/pages/About/index' });
 
   onUpdateLogClick = () => wx.navigateTo({ url: '/pages/UpdateLog/index' });
 
-  onRewardClick = () => {
-    wx.navigateToMiniProgram({
-      appId: AppIds.GeiZan,
-      path: 'pages/apps/largess/detail?id=AZtypSUMi4s%3D'
-    });
-  }
+  // onRewardClick = () => {
+  //   wx.navigateToMiniProgram({
+  //     appId: AppIds.GeiZan,
+  //     path: 'pages/apps/largess/detail?id=AZtypSUMi4s%3D'
+  //   });
+  // }
 
   render() {
-    const { name, stuId = '', pulling } = this.state;
+    const { name, stuId = '', pulling, isAdmin } = this.state;
     const getAvatar = () => (name && name[0]) ? name[0] : '';
     const getName = () => pulling ? '获取中...' : name || '完善个人信息';
     const getStuId = () => pulling ? '获取中...' : stuId;
@@ -81,7 +86,7 @@ export default class Profile extends Component {
           </View>
         </View>
         <View className="profile__group">
-          <ProfileItem title="我的小组" onClick={this.onGroupClick}/>
+          {isAdmin && <ProfileItem title="用户列表" onClick={this.onUserClick}/>}
           <ProfileItem title="授权管理" openType="openSetting" />
         </View>
         <View className="profile__group">
@@ -89,7 +94,7 @@ export default class Profile extends Component {
           <ProfileItem title="关于我们" onClick={this.onAboutClick} />
         </View>
         <View className="profile__group">
-          <ProfileItem title="赞赏一下" onClick={this.onRewardClick} />
+          {/* <ProfileItem title="赞赏一下" onClick={this.onRewardClick} /> */}
           {/* <ProfileItem title="推荐给朋友" openType="share" /> */}
         </View>
         {/* <View className="profile__group">
