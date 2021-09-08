@@ -6,12 +6,12 @@ import './index.less';
 import imgLocation from '../../assets/images/location.png';
 import selectedIcon from '../../assets/images/selected.png';
 import hasAttnd from '../../assets/images/hasAttnd.png';
-import avatarLyx from '../../assets/images/avatar-lyx.jpeg';
 import * as adLog from '../../utils/adLog';
 import { getLocation } from '../../services/location';
 import { signin } from '../../services/signin';
 import AdToast from '../../components/AdToast';
 import * as adStorage from '../../utils/adStorage';
+import { AtAvatar } from 'taro-ui'
 
 export default class Index extends Component {
 
@@ -28,7 +28,8 @@ export default class Index extends Component {
     attndStartTime: '',
     attndEndTime: '',
     currentDate: '',
-    passWd: ''
+    passWd: '',
+    avatarUrl: ''
   }
 
   async componentDidMount() {
@@ -47,12 +48,12 @@ export default class Index extends Component {
     try {
       const result = await getUserInfo();
       if (result.code === 2000) {
-        const { isAdmin, passWd } = result.data;
+        const { isAdmin, passWd, avatarUrl } = result.data;
         // 根据 passWd 来获取考勤信息
         const res = await getAttndByPassWd({ passWd });
         const { hostName, attndArress, attndStartTime, attndEndTime } = res.data
         adStorage.set('isAdmin', isAdmin);
-        this.setState({ hostName, attndArress, attndStartTime, attndEndTime, passWd, isAdmin });
+        this.setState({ hostName, attndArress, attndStartTime, attndEndTime, passWd, isAdmin, avatarUrl });
       }
     } catch (e) {
       adLog.warn('GetUserInfo-error', e);
@@ -146,7 +147,9 @@ export default class Index extends Component {
   onEditAttndClick = () => wx.navigateTo({ url: '/pages/EditAttnd/index' });
 
   render() {
-    const { windowHeight, isAdmin, hostName, attndArress, attndStartTime, attndEndTime, currentDate } = this.state;
+    const { windowHeight, isAdmin, hostName, attndArress,
+      attndStartTime, attndEndTime, currentDate, avatarUrl } = this.state;
+    const getAvatar = () => (hostName && hostName[0]) ? hostName[0] : '';
     return (
       <View>
       <View className="home">
@@ -166,11 +169,8 @@ export default class Index extends Component {
         {/* 用户考勤页面 */}
         {!isAdmin && <View className="home__user_wrapper" style={{ height: `${windowHeight*0.2}px` }}>
           <View className="home__user_opt home__user_info">
-            <Image
-              className="user_icon"
-              lazyLoad mode="aspectFill"
-              src={avatarLyx}
-            />
+            {avatarUrl && <AtAvatar className="avatar" circle image={avatarUrl}></AtAvatar>}
+            {!avatarUrl && <Text className="avatar">{getAvatar()}</Text>}
             <View className="title">
               <Text className="title1">{hostName  || 'loading..'}</Text>
               <Text className="title2">{attndArress  || 'loading..'}</Text>

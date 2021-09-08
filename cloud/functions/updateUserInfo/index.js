@@ -11,7 +11,7 @@ exports.main = async (event) => {
   const attndCollection = db.collection('attnd');
   const groupCollection = db.collection('group');
   const { name, stuId, phoneNum, 
-    address, contactPhoneNum, department } = event;
+    address, contactPhoneNum, department, avatarUrl } = event;
   const { openId } = event.userInfo;
   console.log('event', event);
   if (!name) {
@@ -51,6 +51,7 @@ exports.main = async (event) => {
           address,
           contactPhoneNum,
           department,
+          avatarUrl,
           isAdmin: false,
           createTime: new Date(),
           updateTime: new Date()
@@ -70,6 +71,7 @@ exports.main = async (event) => {
           address,
           contactPhoneNum,
           department,
+          avatarUrl,
           updateTime: new Date()
         }
       });

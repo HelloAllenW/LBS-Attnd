@@ -6,6 +6,7 @@ import imgLocation from '../../assets/images/location.png';
 import { AppIds } from '../../utils/consts';
 import './index.less';
 import * as adStorage from '../../utils/adStorage';
+import { AtAvatar } from 'taro-ui'
 
 /**
  * 个人信息、授权管理、邮箱导出、问题反馈、推荐给朋友、关于我们
@@ -35,7 +36,8 @@ export default class Profile extends Component {
     return {
       title: '快来参加考勤吧！',
       path: '/pages/Home/index',
-      imageUrl: imgLocation
+      imageUrl: imgLocation,
+      avatarUrl: ''
     }
   }
 
@@ -46,8 +48,8 @@ export default class Profile extends Component {
     try {
       const result = await getUserInfo(true);
       if (result.code === 2000) {
-        const { name, stuId } = result.data;
-        this.setState({ name, stuId });
+        const { name, stuId, avatarUrl } = result.data;
+        this.setState({ name, stuId, avatarUrl });
       }
     } catch (e) { }
     this.setState({ pulling: false });
@@ -70,7 +72,7 @@ export default class Profile extends Component {
   // }
 
   render() {
-    const { name, stuId = '', pulling, isAdmin } = this.state;
+    const { name, stuId = '', pulling, isAdmin, avatarUrl } = this.state;
     const getAvatar = () => (name && name[0]) ? name[0] : '';
     const getName = () => pulling ? '获取中...' : name || '完善个人信息';
     const getStuId = () => pulling ? '获取中...' : stuId;
@@ -78,7 +80,8 @@ export default class Profile extends Component {
       <View className="profile">
         <View className="profile__group">
           <View className="profile__header" onClick={this.onUserInfoClick}>
-            <Text className="profile__avatar">{getAvatar()}</Text>
+            {avatarUrl && <AtAvatar circle image={avatarUrl}></AtAvatar>}
+            {!avatarUrl && <Text className="profile__avatar">{getAvatar()}</Text>}
             <View className="profile__info">
               <Text className="profile__info--name">{getName()}</Text>
               <Text className="profile__info--stuid">{getStuId()}</Text>

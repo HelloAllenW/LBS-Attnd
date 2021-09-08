@@ -64,6 +64,7 @@ npm run dev:weapp
 - **本项目在开源项目基础上开发，详情请参考[Lyokoo/LBS-Attnd](https://github.com/Lyokoo/LBS-Attnd)**
 - 本项目使用 Taro 开发，参考 [Taro 开发文档](https://nervjs.github.io/taro/docs/next/README)
 - 需要开通微信小程序云开发，具体参考 [云开发起步](https://developers.weixin.qq.com/miniprogram/dev/wxcloud/basis/getting-started.html)
+- 可使用Taro UI组件库：[TaroUI](https://taro-ui.jd.com/#/docs/introduction)
 
 
 ### 开发过程中笔记
