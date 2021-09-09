@@ -24,7 +24,8 @@ export default class AttndInfo extends Component {
     const { title, desc1, desc2, desc3, tag } = this.props.data;
     return (
       <View className="attnd-info" onClick={this.props.onClick}>
-        <View className="attnd-info__status" onClick={this.props.onTagClick}>
+        {/* 阻止冒泡 */}
+        <View className="attnd-info__status" onClick={ e=> {e.stopPropagation(); this.props.onTagClick()} }>
           <Tag title={tag.text} active={tag.active} />
         </View>
         <View className="attnd-info__title">

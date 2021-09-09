@@ -23,6 +23,7 @@ class App extends Component {
       'pages/GroupList/index',
       'pages/UserList/index',
       'pages/JoinIn/index',
+      'pages/UserDetail/index'
     ],
     window: {
       backgroundTextStyle: 'light',

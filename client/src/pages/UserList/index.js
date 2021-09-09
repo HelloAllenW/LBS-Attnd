@@ -5,7 +5,7 @@ import * as adLog from '../../utils/adLog';
 import { getUserList, updateUserInfoByPassWd } from '../../services/userInfo';
 import { getAllAttnds } from '../../services/attnd';
 import './index.less';
-import { AtActionSheet, AtActionSheetItem } from "taro-ui"
+import { AtActionSheet, AtActionSheetItem, AtToast } from "taro-ui"
 
 export default class UserList extends Component {
 
@@ -31,6 +31,7 @@ export default class UserList extends Component {
   }
 
   groupLoading = false;
+  toastisOpened = false;
 
   componentDidMount() {
     this.getUserList();
@@ -91,10 +92,10 @@ export default class UserList extends Component {
     return data.map(item => ({
       key: item._id,
       title: item.name,
-      desc1: `地址：${item.address || 'loading..'}`,
-      desc2: `个人电话：${item.phoneNum || 'loading..'}  紧急联系人：${item.contactPhoneNum || 'loading..'}`,
-      desc3: `部门：${item.department || 'loading..'} 工号：${item.stuId}`,
-      tag: { active: true, text: `口令：${item.passWd}` }
+      desc1: `工号：${item.stuId || 'loading..'}`,
+      desc2: `部门：${item.department || 'loading..'}`,
+      desc3: `个人电话：${item.phoneNum || 'loading..'}`,
+      tag: { active: true, text: `考勤：${item.passWd}` }
     }));
   }
 
@@ -105,16 +106,28 @@ export default class UserList extends Component {
     this.setState({actionSheetIsOpen:true})
   }
 
+  onItemClick = (index) => {
+    const item = this.state.UserList[index]
+    let startTime = ''
+    let endTime = ''
+    this.state.attndsData.forEach(attnd => {
+      if (item.passWd === attnd.passWd) {
+        startTime = attnd.attndStartTime
+        endTime = attnd.attndEndTime
+      }
+    })
+    wx.navigateTo({ url: `/pages/UserDetail/index?item=${JSON.stringify(item)}&startTime=${startTime}&endTime=${endTime}` });
+  }
+
   // 更新用户考勤类型
   handleClick = async (passWd) => {
     const id = this.state.currentUserId
     try {
       if (this.groupLoading) return;
       this.groupLoading = true;
-      const result = await updateUserInfoByPassWd({id, passWd});
-      if (result.code === 2000) {
-        this.getUserList()
-      }
+      await updateUserInfoByPassWd({id, passWd});
+      this.setState({actionSheetIsOpen:false})
+      this.toastisOpened = true
     } catch (e) {
       adLog.warn('updateUserInfoByPassWd-error', e);
     }
@@ -133,6 +146,7 @@ export default class UserList extends Component {
           hasMore={userHasMore}
           onLoadMore={this.onGroupLoadMore}
           onTagClick={this.onTagClick}
+          onItemClick={this.onItemClick}
         />
         <AtActionSheet
           isOpened={actionSheetIsOpen}
@@ -148,6 +162,7 @@ export default class UserList extends Component {
               })
             }
         </AtActionSheet>
+        <AtToast isOpened={this.toastisOpened} text="修改成功"></AtToast>
       </View>
     );
   }
