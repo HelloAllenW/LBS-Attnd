@@ -156,7 +156,7 @@ export default class UserList extends Component {
               attndsData.map(item => {
                 return (
                   <AtActionSheetItem onClick={ () => this.handleClick(item.passWd) }>
-                    {item.passWd}-{item.attndArress}
+                    {item.passWd}（{item.attndStartTime}:{item.attndEndTime}）
                   </AtActionSheetItem>
                 );
               })

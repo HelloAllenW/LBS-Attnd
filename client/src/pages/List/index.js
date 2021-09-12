@@ -8,6 +8,7 @@ import * as adLog from '../../utils/adLog';
 import { throttle, formatDate } from '../../utils/func';
 import './index.less';
 import * as adStorage from '../../utils/adStorage';
+import { getUserAttndRecords } from '../../services/userAttndRecords';
 
 export default class List extends Component {
 
@@ -37,6 +38,10 @@ export default class List extends Component {
       signinHasMore: true,
       signinOffsetId: null,
 
+      userAttndsRecordData: [],
+      userAttndsRecordHasMore: true,
+      userAttndsRecordOffsetId: null,
+
       isAdmin: false
     };
   }
@@ -50,8 +55,12 @@ export default class List extends Component {
   ]
 
   componentDidShow = throttle(function () {
-    this.getSigninList();
-    this.getAttndList();
+    if (this.state.isAdmin) {
+      this.getSigninList();
+      this.getAttndList(); 
+    } else {
+      this.getUserAttndsRecordList();
+    }
   }, 6000);
 
   componentDidMount() {
@@ -63,6 +72,50 @@ export default class List extends Component {
     this.setState({
       tabIndex: value
     })
+  }
+
+  getUserAttndsRecord = (data = []) => {
+    return data.map(item => ({
+      key: item._id,
+      title: item.date,
+      desc1: `上班打开：${item.startTime || 'loading..'}`,
+      desc2: `下班打卡：${item.endTime || 'loading..'}`,
+      desc3: ``,
+      tag: { active: false, text: '已打卡' }
+    }));
+  }
+
+  getUserAttndsRecordList = async (offset = 0) => {
+    const { userAttndsRecordOffsetId, userAttndsRecordData } = this.state;
+    // 请求第 1 页时激活 loadMore 节点
+    if (offset === 0) {
+      this.setState({ userAttndsRecordHasMore: true });
+    }
+    if (this.attndLoading) return;
+    this.attndLoading = true;
+
+    try {
+      const {
+        data: { hasMore, offsetId, list }
+      } = await getUserAttndRecords({
+        offset,
+        offsetId: userAttndsRecordOffsetId
+      });
+
+      // offset === 0 时更新偏移基准 offsetId
+      if (offset === 0 && offsetId) {
+        this.setState({ userAttndsRecordOffsetId: offsetId });
+      }
+
+      this.setState({
+        userAttndsRecordData: offset === 0 ? list : userAttndsRecordData.concat(list),
+        userAttndsRecordHasMore: hasMore
+      });
+
+    } catch (e) {
+      adLog.log('getUserAttndsRecordList-error', e);
+    }
+    this.attndLoading = false;
   }
 
   getAttndList = async (offset = 0) => {
@@ -141,6 +194,11 @@ export default class List extends Component {
     this.getSigninList(offset);
   }
 
+  onUserAttndRecordLoadMore = async () => {
+    const offset = this.state.userAttndsRecordData.length;
+    this.getUserAttndsRecordList(offset);
+  }
+
   getComputeAttndData = (data = []) => {
     return data.map(item => ({
       key: item._id,
@@ -179,11 +237,14 @@ export default class List extends Component {
       attndHasMore,
       signinData,
       signinHasMore,
-      isAdmin
+      isAdmin,
+      userAttndsRecordData,
+      userAttndsRecordHasMore
     } = this.state;
 
     const computeSigninData = this.getComputeAttndData(signinData);
     const computeAttndData = this.getComputeAttndData(attndData);
+    const computeUserAttndsRecordData = this.getUserAttndsRecord(userAttndsRecordData)
 
     return (
       <View className="list">
@@ -215,10 +276,9 @@ export default class List extends Component {
         </AtTabs>}
         {!isAdmin && <AttndList
           height={listHeight}
-          data={computeSigninData}
-          hasMore={signinHasMore}
-          onLoadMore={this.onSigninLoadMore}
-          onItemClick={this.onSigninItemClick}
+          data={computeUserAttndsRecordData}
+          hasMore={userAttndsRecordHasMore}
+          onLoadMore={this.onUserAttndRecordLoadMore}
         />}
       </View>
     )

@@ -51,3 +51,19 @@ export const formatDate = (dateLike) => {
   }
   return `${[year, month, day].map(format).join('-')} ${[hour, min].map(format).join(':')}`;
 }
+
+export const getDistance = (lng1, lat1, lng2, lat2) => {
+  if (lng1 === lng2 && lat1 === lat2) {
+    return 0;
+  }
+  let radLat1 = lat1 * Math.PI / 180.0;
+  let radLat2 = lat2 * Math.PI / 180.0;
+  let a = radLat1 - radLat2;
+  let b = lng1 * Math.PI / 180.0 - lng2 * Math.PI / 180.0;
+  let s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a / 2), 2) +
+    Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(b / 2), 2)));
+  s = s * 6378.137; // 🌍 地球半径
+  // s = s * 6371.393; // 🌍 真正地球半径
+  s = Math.round(s * 10000) / 10000;
+  return s * 1000;
+};

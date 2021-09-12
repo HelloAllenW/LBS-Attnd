@@ -12,6 +12,8 @@ import { signin } from '../../services/signin';
 import AdToast from '../../components/AdToast';
 import * as adStorage from '../../utils/adStorage';
 import { AtAvatar } from 'taro-ui'
+import { addUserAttndRecord } from '../../services/userAttndRecords';
+import { getDistance } from '../../utils/func';
 
 export default class Index extends Component {
 
@@ -23,37 +25,102 @@ export default class Index extends Component {
   state = {
     windowHeight: 0,
     isAdmin: false, // true表示为管理员，需要展示管理员页面。false表示为普通员工，需展示打卡页面
-    hostName: '',
+    name: '',
     attndArress: '',
     attndStartTime: '',
     attndEndTime: '',
     currentDate: '',
     passWd: '',
-    avatarUrl: ''
+    avatarUrl: '',
+    firstAttnd: false,
+    firstAttndTime: '',
+    secondAttnd: false,
+    secondAttndTime: '',
+    outOfDistance: false
   }
 
   async componentDidMount() {
     this.computeHeight();
     // 获取当前用户角色及当前用户的考勤时间段
     this.getUserInfo()
+
+    // 获取当前打卡状态
+    const firstAttndTime = adStorage.get('hasFirstAttnd');
+    const secondAttndTime = adStorage.get('hasSeconddAttnd');
+    if (firstAttndTime) {
+      this.setState({
+        firstAttnd: true,
+        firstAttndTime
+      })
+    }
+    if (secondAttndTime) {
+      this.setState({
+        secondAttnd: true,
+        secondAttndTime
+      })
+    }
+
+    // 获取当前时间
     setInterval(()=>{
       var now = new Date();
       this.setState({
-        currentDate: now.toLocaleTimeString()
+        currentDate: this.addZero(now.getHours()) + ':'
+        + this.addZero(now.getMinutes()) + ':' + this.addZero(now.getSeconds())
       })
+      if (parseInt(now.getHours()) === 23
+        && parseInt(now.getMinutes()) === 59
+        && parseInt(now.getSeconds()) === 0) {
+        // 保存当天考勤记录到数据库
+        this.saveUserAttndRecord(now)
+      }
+      if (parseInt(now.getHours()) === 0
+        && parseInt(now.getMinutes()) === 0
+        && parseInt(now.getSeconds()) === 0) { // 0点清空当天签到记录
+        adStorage.set('hasFirstAttnd', '');
+        adStorage.set('hasSeconddAttnd', '');
+        this.setState({
+          firstAttnd: false,
+          secondAttnd: false
+        })
+      }
     }, 1000);
+  }
+
+  saveUserAttndRecord = async (now) => {
+    await addUserAttndRecord({
+      date: `${now.getMonth() + 1}月${now.getDate()}日`,
+      startTime: this.state.firstAttndTime,
+      endTime: this.state.secondAttndTime
+    });
   }
 
   getUserInfo = async () => {
     try {
       const result = await getUserInfo();
       if (result.code === 2000) {
-        const { isAdmin, passWd, avatarUrl } = result.data;
+        const { isAdmin, passWd, avatarUrl, name } = result.data;
+
         // 根据 passWd 来获取考勤信息
         const res = await getAttndByPassWd({ passWd });
-        const { hostName, attndArress, attndStartTime, attndEndTime } = res.data
+        const { attndArress, attndStartTime, attndEndTime, location } = res.data
         adStorage.set('isAdmin', isAdmin);
-        this.setState({ hostName, attndArress, attndStartTime, attndEndTime, passWd, isAdmin, avatarUrl });
+        this.setState({ name, attndArress, attndStartTime, attndEndTime, passWd, isAdmin, avatarUrl });
+
+        // 获取我的位置
+        const myLocation = await getLocation();
+        console.log('myLocation', myLocation)
+        console.log('location', location)
+        const distance = getDistance(myLocation.lng, myLocation.lat, location.lng, location.lat)
+        console.log('距离考勤距离：', distance)
+        if (distance >= 0 && distance <= 500) {
+          this.setState({
+            outOfDistance: false
+          })
+        } else {
+          this.setState({
+            outOfDistance: true
+          })
+        }
       }
     } catch (e) {
       adLog.warn('GetUserInfo-error', e);
@@ -99,6 +166,24 @@ export default class Index extends Component {
           Taro.adToast({ text: '签到成功', status: 'success' }, () => {
             this.onRefresh();
           });
+          // 记录签到成功的状态
+          var myDate = new Date();
+          const time = this.addZero(myDate.getHours()) + ':' + this.addZero(myDate.getMinutes())
+          if (adStorage.get('hasFirstAttnd')) { // 今天已经签到过一次
+            // 下班打卡
+            this.setState({
+              secondAttnd: true,
+              secondAttndTime: time
+            })
+            adStorage.set('hasSeconddAttnd', time);
+          } else {
+            // 上班打卡
+            adStorage.set('hasFirstAttnd', time);
+            this.setState({
+              firstAttnd: true,
+              firstAttndTime: time
+            })
+          }
           break;
         case 3002: // 已签到
           Taro.adToast({ text: '已签到', status: 'success' }, () => {
@@ -138,18 +223,28 @@ export default class Index extends Component {
     }
   }
 
-  onRefresh() {
-
+  outOfSingin() {
+    Taro.adToast({ text: '超出考勤范围', status: 'error' });
   }
+
+  addZero(num) {
+    if (parseInt(num) < 10) {
+      num = '0'+num;
+    }
+    return num
+  }
+
+  onRefresh() {}
 
   onFindAttndClick = () => wx.navigateTo({ url: '/pages/FindAttnd/index' });
 
   onEditAttndClick = () => wx.navigateTo({ url: '/pages/EditAttnd/index' });
 
   render() {
-    const { windowHeight, isAdmin, hostName, attndArress,
-      attndStartTime, attndEndTime, currentDate, avatarUrl } = this.state;
-    const getAvatar = () => (hostName && hostName[0]) ? hostName[0] : '';
+    const { windowHeight, isAdmin, name, attndArress,
+      attndStartTime, attndEndTime, currentDate, avatarUrl,
+      firstAttndTime, secondAttndTime, outOfDistance, firstAttnd } = this.state;
+    const getAvatar = () => (name && name[0]) ? name[0] : '';
     return (
       <View>
       <View className="home">
@@ -172,8 +267,8 @@ export default class Index extends Component {
             {avatarUrl && <AtAvatar className="avatar" circle image={avatarUrl}></AtAvatar>}
             {!avatarUrl && <Text className="avatar">{getAvatar()}</Text>}
             <View className="title">
-              <Text className="title1">{hostName  || 'loading..'}</Text>
-              <Text className="title2">{attndArress  || 'loading..'}</Text>
+              <Text className="title1">{name  || 'loading..'}</Text>
+              <Text className="title2">{'考勤地址：' + attndArress  || 'loading..'}</Text>
             </View>
           </View>
         </View> }
@@ -183,39 +278,46 @@ export default class Index extends Component {
               <View className="topLeft bg">
                 <Text className="title1">上班{attndStartTime  || 'loading..'}</Text>
                 <View className="home__user_text">
-                  <Image
+                  {firstAttnd && <Image
                     className="hasAttnd"
                     lazyLoad mode="aspectFill"
                     src={hasAttnd}
-                  />
-                  <Text className="title2">07:32已打卡</Text>
+                  />}
+                  {firstAttnd && <Text className="title2">{firstAttndTime}已打卡</Text>}
+                  {!firstAttnd && <Text className="title2">未打卡</Text>}
                 </View>
               </View>
               <View className="topRight bg">
                 <Text className="title1">下班{attndEndTime  || 'loading..'}</Text>
                 <View className="home__user_text">
-                  <Image
+                  {secondAttnd && <Image
                     className="hasAttnd"
                     lazyLoad mode="aspectFill"
                     src={hasAttnd}
-                  />
-                  <Text className="title2">07:32已打卡</Text>
+                  />}
+                  {secondAttnd && <Text className="title2">{secondAttndTime}已打卡</Text>}
+                  {!secondAttnd && <Text className="title2">未打卡</Text>}
                 </View>
               </View>
             </View>
             <View className="center">
-              <View className="home__user_circle" onClick={this.onSignin}>
-                <Text>上班打卡</Text>
+              <View
+                className={outOfDistance?'home__user_circle home__user_circle_disabled':'home__user_circle'}
+                onClick={outOfDistance?this.outOfSingin:this.onSignin}>
+                <Text>{firstAttnd?'下班':'上班'}打卡</Text>
                 <Text className="current_time">{currentDate}</Text>
               </View>
-              <View className="home__user_text">
+              {!outOfDistance && <View className="home__user_text">
                 <Image
                     className="selectedIcon"
                     lazyLoad mode="aspectFill"
                     src={selectedIcon}
                   />
                 <Text className="tip">已进入考勤范围</Text>
-              </View>
+              </View>}
+              {outOfDistance && <View className="home__user_text">
+                <Text className="tip">超出考勤范围</Text>
+              </View>}
             </View>
           </View>
         </View> }
