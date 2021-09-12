@@ -34,9 +34,9 @@ export default class List extends Component {
       attndHasMore: true,
       attndOffsetId: null,
 
-      signinData: [],
-      signinHasMore: true,
-      signinOffsetId: null,
+      // signinData: [],
+      // signinHasMore: true,
+      // signinOffsetId: null,
 
       userAttndsRecordData: [],
       userAttndsRecordHasMore: true,
@@ -48,6 +48,7 @@ export default class List extends Component {
 
   attndLoading = false;
   signinLoading = false;
+  userAttndsRecordLoading = false;
 
   tabList = [
     { title: '我参与的' },
@@ -55,12 +56,9 @@ export default class List extends Component {
   ]
 
   componentDidShow = throttle(function () {
-    if (this.state.isAdmin) {
-      this.getSigninList();
-      this.getAttndList(); 
-    } else {
-      this.getUserAttndsRecordList();
-    }
+    // this.getSigninList();
+    this.getUserAttndsRecordList();
+    this.getAttndList();
   }, 6000);
 
   componentDidMount() {
@@ -91,8 +89,8 @@ export default class List extends Component {
     if (offset === 0) {
       this.setState({ userAttndsRecordHasMore: true });
     }
-    if (this.attndLoading) return;
-    this.attndLoading = true;
+    if (this.userAttndsRecordLoading) return;
+    this.userAttndsRecordLoading = true;
 
     try {
       const {
@@ -115,7 +113,7 @@ export default class List extends Component {
     } catch (e) {
       adLog.log('getUserAttndsRecordList-error', e);
     }
-    this.attndLoading = false;
+    this.userAttndsRecordLoading = false;
   }
 
   getAttndList = async (offset = 0) => {
@@ -151,6 +149,7 @@ export default class List extends Component {
     this.attndLoading = false;
   }
 
+  /*
   getSigninList = async (offset = 0) => {
     const { signinOffsetId, signinData } = this.state;
     // 请求第 1 页时激活 loadMore 节点
@@ -183,16 +182,19 @@ export default class List extends Component {
     }
     this.signinLoading = false;
   }
+  */
 
   onAttndLoadMore = async () => {
     const offset = this.state.attndData.length;
     this.getAttndList(offset);
   }
 
+  /*
   onSigninLoadMore = async () => {
     const offset = this.state.signinData.length;
     this.getSigninList(offset);
   }
+  */
 
   onUserAttndRecordLoadMore = async () => {
     const offset = this.state.userAttndsRecordData.length;
@@ -219,6 +221,7 @@ export default class List extends Component {
     wx.navigateTo({ url: `/pages/SignIn/index?passWd=${encodeURIComponent(passWd)}` });
   }
 
+  /*
   onSigninItemClick = (index) => {
     const { signinData } = this.state;
     const passWd = signinData[index] ? signinData[index].passWd : '';
@@ -227,6 +230,7 @@ export default class List extends Component {
     }
     wx.navigateTo({ url: `/pages/SignIn/index?passWd=${encodeURIComponent(passWd)}` });
   }
+  */
 
   render() {
     const {
@@ -235,14 +239,14 @@ export default class List extends Component {
       tabIndex,
       attndData,
       attndHasMore,
-      signinData,
-      signinHasMore,
+      // signinData,
+      // signinHasMore,
       isAdmin,
       userAttndsRecordData,
       userAttndsRecordHasMore
     } = this.state;
 
-    const computeSigninData = this.getComputeAttndData(signinData);
+    // const computeSigninData = this.getComputeAttndData(signinData);
     const computeAttndData = this.getComputeAttndData(attndData);
     const computeUserAttndsRecordData = this.getUserAttndsRecord(userAttndsRecordData)
 
@@ -256,12 +260,18 @@ export default class List extends Component {
           height={`${windowHeight}px`}
         >
           <AtTabsPane current={tabIndex} index={0} >
-            <AttndList
+            {/* <AttndList
               height={listHeight}
               data={computeSigninData}
               hasMore={signinHasMore}
               onLoadMore={this.onSigninLoadMore}
               onItemClick={this.onSigninItemClick}
+            /> */}
+            <AttndList
+              height={listHeight}
+              data={computeUserAttndsRecordData}
+              hasMore={userAttndsRecordHasMore}
+              onLoadMore={this.onUserAttndRecordLoadMore}
             />
           </AtTabsPane>
           <AtTabsPane current={tabIndex} index={1}>

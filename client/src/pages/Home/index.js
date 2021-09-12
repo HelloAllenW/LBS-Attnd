@@ -236,7 +236,8 @@ export default class Index extends Component {
 
   onRefresh() {}
 
-  onFindAttndClick = () => wx.navigateTo({ url: '/pages/FindAttnd/index' });
+  // 通过输入口令来签到
+  // onFindAttndClick = () => wx.navigateTo({ url: '/pages/FindAttnd/index' });
 
   onEditAttndClick = () => wx.navigateTo({ url: '/pages/EditAttnd/index' });
 
@@ -249,15 +250,15 @@ export default class Index extends Component {
       <View>
       <View className="home">
         {isAdmin && <View className="home__wrapper" style={{ height: `${windowHeight / 2}px` }}>
-          <View className="home__signin home__opt" onClick={this.onFindAttndClick}>
+          <View className="home__signin home__opt" onClick={this.onSignin}>
             <View className="home__circle">签</View>
-            <View className="home__text">签到 / 加入小组</View>
+            <View className="home__text">签到</View>
           </View>
         </View> }
         {isAdmin && <View className="home__wrapper" style={{ height: `${windowHeight / 2}px` }}>
           <View className="home__attnd home__opt" onClick={this.onEditAttndClick}>
             <View className="home__circle">勤</View>
-            <View className="home__text">发起考勤</View>
+            <View className="home__text">创建考勤</View>
           </View>
         </View>}
 

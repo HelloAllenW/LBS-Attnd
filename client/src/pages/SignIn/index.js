@@ -29,9 +29,10 @@ export default class Index extends Component {
       var { windowWidth, windowHeight } = wx.getSystemInfoSync();
       var rpx = windowWidth / 750;
       var headerHeight = 258 * rpx; // PX
-      var footerHeight = 100 * rpx; // PX
+      // var footerHeight = 100 * rpx; // PX
+      var footerHeight = 0 * rpx; // PX
       var gap = (20 * 4) * rpx; // PX
-      var listHeight = windowHeight - headerHeight - footerHeight - gap;
+      var listHeight = windowHeight - headerHeight - footerHeight - gap + 10;
     } catch (e) {
       console.log(e);
     }
@@ -412,14 +413,14 @@ export default class Index extends Component {
               onStatusUpdate={this.onSigninerStatusUpdate}
             />
           </View>
-          <View className="signin__footer">
+          {/* <View className="signin__footer">
             <View className="signin__footer--btn">
               {attndBelonging
                 ? <AtButton type="primary" disabled={btnStatus.disabled} onClick={this.onFinishAttnd}>{btnStatus.text}</AtButton>
                 : <AtButton type="primary" disabled={btnStatus.disabled} onClick={this.onSignin}>{btnStatus.text}</AtButton>
               }
             </View>
-          </View>
+          </View> */}
         </View>
         <AdToast />
       </View>
